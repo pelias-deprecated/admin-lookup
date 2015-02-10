@@ -1,7 +1,7 @@
 {
   "name": "pelias-admin-lookup",
-  "version": "0.0.0",
-  "description": "A fast, local, streaming Quattroshapes coarse reverse-geocoder.",
+  "version": "0.1.0",
+  "description": "A fast, local, streaming Quattroshapes administrative hierarchy lookup.",
   "keywords": ["local", "stream", "quattroshapes", "coarse", "reverse-geocoder"],
   "author": "mapzen",
   "main": "index.js",
