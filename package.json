@@ -13,7 +13,7 @@
     "shapefile-stream": "0.0.4",
     "simplify-js": "1.2.1",
     "through2": "0.6.3",
-    "async-reduce": "0.9.0"
+    "async": "0.9.0"
   },
   "devDependencies": {
     "precommit-hook": "1.0.7",

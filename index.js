@@ -62,7 +62,7 @@ function createLookupStream( createStreamCb ){
     }
 
     config.path = path.join( quattroPath, 'qs_' + config.path );
-    loadShapefile( config, lookupFromShapefileCb );
+    loadShapefile.load( config, lookupFromShapefileCb );
   }
 
   var startTime = new Date().getTime();
