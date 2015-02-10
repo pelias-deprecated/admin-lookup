@@ -1,3 +1,12 @@
+/**
+ * @file Create a Transform stream that reverse-geocodes incoming pelias-model
+ * `Document`s against the Quattroshapes polygon dataset, and sets their
+ * admin/alpha3 properties accordingly. Note that it will load the entire
+ * dataset into memory, which makes it incredibly fast, but requires just about
+ * a gigabyte of RAM (meaning that a 64-bit machine is ideal, on which Node has
+ * a default 1gb memory limit instead of 512mb on 32-bit machines).
+ */
+
 'use strict';
 
 var path = require( 'path' );
@@ -6,6 +15,12 @@ var peliasConfig = require( 'pelias-config' );
 var async = require( 'async' );
 var loadShapefile = require( './lib/load_shapefile' );
 
+/**
+ * Asynchronously create the administrative lookup stream.
+ *
+ * @param {function} createStreamCb The callback that will be passed the
+ *    completed lookup stream when all polygons are loaded.
+ */
 function createLookupStream( createStreamCb ){
   var quattroAdminLevels = [
     {
@@ -60,6 +75,16 @@ function createLookupStream( createStreamCb ){
   async.each( quattroAdminLevels, asyncIterate, asyncDone);
 }
 
+/**
+ * Called by `createLookupStream()`.
+ *
+ * @param {object} lookups Maps the names of the administrative layers,
+ *    'admin1', 'admin2', etc, to the `PolygonLookup` object loaded with that
+ *    layer's polygons.
+ * @return {Transform stream} A stream that expects pelias-model `Document`
+ *    objets and intersects them against each of the layers in `lookups`,
+ *    setting their admin values (via `setAdmin()`) accordingly.
+ */
 function streamFromLookups( lookups ){
   var adminNameProps = {
     admin2: 'qs_a2',
