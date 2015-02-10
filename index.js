@@ -3,9 +3,10 @@
 var path = require( 'path' );
 var through = require( 'through2' );
 var peliasConfig = require( 'pelias-config' );
+var async = require( 'async' );
 var loadShapefile = require( './lib/load_shapefile' );
 
-function createLookupStream( cb ){
+function createLookupStream( createStreamCb ){
   var quattroAdminLevels = [
     {
       name: 'admin1',
@@ -34,25 +35,29 @@ function createLookupStream( cb ){
     }
   ];
 
-  var lookups = {};
-  var lookupsCreated = 0;
-  function lookupFromShapefile( lookup, lvl ){
-    console.log( lvl );
-    lookups[ lvl ] = lookup;
-    if( ++lookupsCreated === Object.keys( quattroAdminLevels ).length ){
-      console.log( 'total time', new Date().getTime() - startTime );
-      cb( streamFromLookups( lookups ) );
-    }
-  }
-
   var config = peliasConfig.generate();
   var quattroPath = config.imports.quattroshapes.datapath;
 
-  var startTime = new Date().getTime();
-  quattroAdminLevels.forEach( function load( config ){
+  var lookups = {};
+
+  function asyncIterate( config, iterateCb ){
+    function lookupFromShapefileCb( lookup, lvl ){
+      lookups[ lvl ] = lookup;
+      iterateCb();
+    }
+
     config.path = path.join( quattroPath, 'qs_' + config.path );
-    loadShapefile( config, lookupFromShapefile );
-  });
+    loadShapefile( config, lookupFromShapefileCb );
+  }
+
+  var startTime = new Date().getTime();
+  function asyncDone(){
+    var endTime = new Date().getTime();
+    console.log( 'total time', endTime - startTime );
+    createStreamCb( streamFromLookups( lookups ) );
+  }
+
+  async.each( quattroAdminLevels, asyncIterate, asyncDone);
 }
 
 function streamFromLookups( lookups ){
