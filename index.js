@@ -96,7 +96,7 @@ function streamFromLookups( lookups ){
   return through.obj( function write( model, _, next ){
     var pt = model.getCentroid();
 
-    var adm1 = lookups.admin1.search( pt.lat, pt.lon );
+    var adm1 = lookups.admin1.search( pt.lon, pt.lat );
     try {
       model.setAdmin( 'admin0', adm1.properties.qs_adm0 );
     } catch( ex ){}
@@ -110,7 +110,7 @@ function streamFromLookups( lookups ){
     } catch( ex ){}
 
     for( var lvl in adminNameProps ){
-      var poly = lookups[ lvl ].search( pt.lat, pt.lon );
+      var poly = lookups[ lvl ].search( pt.lon, pt.lat );
       if( poly !== undefined ){
         var name = poly.properties[ adminNameProps[ lvl ] ];
         try {
