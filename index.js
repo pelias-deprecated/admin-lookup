@@ -12,6 +12,7 @@
 var path = require( 'path' );
 var through = require( 'through2' );
 var peliasConfig = require( 'pelias-config' );
+var logger = require( 'pelias-logger' ).get( 'admin-lookup' );
 var async = require( 'async' );
 var loadShapefile = require( './lib/load_shapefile' );
 
@@ -55,8 +56,10 @@ function createLookupStream( createStreamCb ){
 
   var lookups = {};
 
+  logger.info( 'Creating quattroshapes polygon lookups.' );
   function asyncIterate( config, iterateCb ){
     function lookupFromShapefileCb( lookup, lvl ){
+      logger.info( 'Finished loading:', lvl );
       lookups[ lvl ] = lookup;
       iterateCb();
     }
@@ -65,10 +68,8 @@ function createLookupStream( createStreamCb ){
     loadShapefile.load( config, lookupFromShapefileCb );
   }
 
-  var startTime = new Date().getTime();
   function asyncDone(){
-    var endTime = new Date().getTime();
-    console.log( 'total time', endTime - startTime );
+    logger.info( 'Finished creating lookups.' );
     createStreamCb( streamFromLookups( lookups ) );
   }
 
@@ -93,21 +94,57 @@ function streamFromLookups( lookups ){
     neighborhood: 'name'
   };
 
-  return through.obj( function write( model, _, next ){
+  var stats = {
+    search: {
+      admin1: 0,
+      admin2: 0,
+      localadmin: 0,
+      locality: 0,
+      neighborhood: 0
+    },
+    set: {
+      admin0: 0,
+      admin1: 0,
+      alpha3: 0,
+      admin2: 0,
+      localadmin: 0,
+      locality: 0,
+      neighborhood: 0
+    }
+  };
+
+  var intervalId = setInterval( function logStats(  ){
+    console.log( 'hello' );
+    logger.verbose( 'Search misses:', stats.search );
+    logger.verbose( 'Set fails:', stats.set );
+  }, 1e4);
+
+  function write( model, _, next ){
     var pt = model.getCentroid();
 
     var adm1 = lookups.admin1.search( pt.lon, pt.lat );
-    try {
-      model.setAdmin( 'admin0', adm1.properties.qs_adm0 );
-    } catch( ex ){}
+    if( adm1 !== undefined ){
+      try {
+        model.setAdmin( 'admin0', adm1.properties.qs_adm0 );
+      } catch( ex ){
+        stats.set.admin0++;
+      }
 
-    try {
-      model.setAdmin( 'admin1', adm1.properties.qs_a1 );
-    } catch( ex ){}
+      try {
+        model.setAdmin( 'admin1', adm1.properties.qs_a1 );
+      } catch( ex ){
+        stats.set.admin1++;
+      }
 
-    try {
-      model.setAlpha3( adm1.properties.qs_adm0_a3 );
-    } catch( ex ){}
+      try {
+        model.setAlpha3( adm1.properties.qs_adm0_a3 );
+      } catch( ex ){
+        stats.set.alpha3++;
+      }
+    }
+    else {
+      stats.search.admin1++;
+    }
 
     for( var lvl in adminNameProps ){
       var poly = lookups[ lvl ].search( pt.lon, pt.lat );
@@ -115,13 +152,25 @@ function streamFromLookups( lookups ){
         var name = poly.properties[ adminNameProps[ lvl ] ];
         try {
           model.setAdmin( lvl, name );
-        } catch( ex ){}
+        } catch( ex ){
+          stats.set[ lvl ]++;
+        }
+      }
+      else {
+        stats.search[ lvl ]++;
       }
     }
 
-    this.push( model );
+    this.push( model ); // jshint ignore:line
     next();
-  });
+  }
+
+  function end( done ){
+    clearInterval( intervalId );
+    done();
+  }
+
+  return through.obj( write, end );
 }
 
 module.exports = createLookupStream;
