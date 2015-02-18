@@ -114,7 +114,6 @@ function streamFromLookups( lookups ){
   };
 
   var intervalId = setInterval( function logStats(  ){
-    console.log( 'hello' );
     logger.verbose( 'Search misses:', stats.search );
     logger.verbose( 'Set fails:', stats.set );
   }, 1e4);
