@@ -1,3 +1,8 @@
+/**
+ * Warning: this is entirely a WIP proof-of-concept. Forks a `./worker`
+ * process per admin level and loads one Quattroshapes layer into it.
+ */
+
 var childProcess = require( 'child_process' );
 var peliasConfig = require( 'pelias-config' );
 var path = require( 'path' );
@@ -30,6 +35,10 @@ var quattroAdminLevels = [
   }
 ];
 
+/**
+ * Initialize all child processes, and pass an array of them to `cb()` when
+ * they've all finished loading Quattroshapes.
+ */
 function initWorkers( cb ){
   var numLoadedLevels = 0;
 
@@ -53,9 +62,14 @@ function initWorkers( cb ){
 }
 
 initWorkers( function (workers){
+  // Used to store results from different processes while they get compiled
+  // into a full admin hierarchy per `search()`.
   var responseMap = {};
-
   var searchId = 0;
+
+  /**
+   * Search the Quattroshapes layers in `workers` for the given node.
+   */
   function search( node ){
     searchId++;
     responseMap[ searchId ] = {
@@ -71,6 +85,7 @@ initWorkers( function (workers){
     });
   }
 
+  // Remap Quattro attribute names to more readable ones.
   var adminNameProps = {
     qs_adm0: 'admin0',
     qs_adm0_a3: 'alpha3',
@@ -80,6 +95,10 @@ initWorkers( function (workers){
     qs_loc: 'locality',
     name: 'neighborhood'
   };
+
+  /**
+   * Assemble responses from different child processes in `responseMap`.
+   */
   workers.forEach( function ( worker ){
     worker.on( 'message', function ( resp ){
       var responses = responseMap[ resp.id ];
@@ -88,7 +107,8 @@ initWorkers( function (workers){
           responses.node[ adminNameProps[ key ] ] = resp.results[ key ];
         }
       }
-      if( ++responses.numResponses === workers.length ){
+      var hierarchyComplete = ++responses.numResponses === workers.length;
+      if( hierarchyComplete ){
         delete responseMap[ resp.id ];
         console.log( JSON.stringify( responses.node, undefined, 4 ) );
       }

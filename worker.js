@@ -1,3 +1,8 @@
+/**
+ * Warning: this is entirely a WIP proof-of-concept. A worker process designed
+ * to load one Quattro layer into memory.
+ */
+
 var loadShapefile = require( './lib/load_shapefile' );
 
 var adminLookup;
