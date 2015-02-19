@@ -6,6 +6,7 @@
 var childProcess = require( 'child_process' );
 var peliasConfig = require( 'pelias-config' );
 var path = require( 'path' );
+var testPoints = require( './points.json' );
 
 var quattroAdminLevels = [
   {
@@ -85,6 +86,16 @@ initWorkers( function (workers){
     });
   }
 
+  var numSearchesCompleted = 0;
+  function searchCb( node ){
+    console.log( JSON.stringify( node, undefined, 4 ) );
+    if( ++numSearchesCompleted === testPoints.length ){
+      workers.forEach( function ( worker ){
+        worker.kill();
+      });
+    }
+  }
+
   // Remap Quattro attribute names to more readable ones.
   var adminNameProps = {
     qs_adm0: 'admin0',
@@ -110,12 +121,12 @@ initWorkers( function (workers){
       var hierarchyComplete = ++responses.numResponses === workers.length;
       if( hierarchyComplete ){
         delete responseMap[ resp.id ];
-        console.log( JSON.stringify( responses.node, undefined, 4 ) );
+        searchCb( responses.node );
       }
     });
   });
 
-  require( './points.json' ).forEach( function ( point ){
+  testPoints.forEach( function ( point ){
     var node = {
       name: point.name,
       center_point: {
