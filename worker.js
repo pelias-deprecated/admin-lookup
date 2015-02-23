@@ -8,7 +8,7 @@ var loadShapefile = require( './lib/load_shapefile' );
 var adminLookup;
 var name;
 
-process.on( 'message', function ( msg ){
+function messageHandler( msg ){
   if( msg.type === 'load' ){
     name = msg.config.name;
     console.log( 'loading', name );
@@ -29,4 +29,6 @@ process.on( 'message', function ( msg ){
       results: results
     });
   }
-});
+}
+
+process.on( 'message', messageHandler );

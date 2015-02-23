@@ -19,7 +19,7 @@ var quattroAdminLevels = [
     props: [ 'qs_a2' ]
   },
   {
-    name: 'localadmin',
+    name: 'local_admin',
     path: 'localadmin',
     props: [ 'qs_la' ]
   },
@@ -31,7 +31,7 @@ var quattroAdminLevels = [
   {
     name: 'neighborhood',
     path: 'neighborhoods',
-    props: [ 'name' ]
+    props: [ 'name', 'name_adm0', 'name_adm1', 'name_adm2', 'name_lau', 'name_local' ]
   }
 ];
 
@@ -69,31 +69,29 @@ function searchFromWorkers( workers ){
   workers.forEach( function ( worker ){
     worker.on( 'message', function ( resp ){
       var responses = responseMap[ resp.id ];
-      for( var key in resp.results ){
-        if( resp.results[ key ] !== undefined && resp.results[ key ] !== null ){
-          responses.node[ adminNameProps[ key ] ] = resp.results[ key ];
-        }
-      }
+      responses[ resp.name ] = resp.results;
+
       var hierarchyComplete = ++responses.numResponses === workers.length;
       if( hierarchyComplete ){
-        var cb = responseMap[ resp.id ].cb;
-        var node = responseMap[ resp.id ].node;
-        delete responseMap[ resp.id ];
-        cb( node );
+        completeSearch( resp.id );
       }
     });
   });
 
-  // Remap Quattro attribute names to more readable ones.
-  var adminNameProps = {
-    qs_adm0: 'admin0',
-    qs_adm0_a3: 'alpha3',
-    qs_a1: 'admin1',
-    qs_a2: 'admin2',
-    qs_la: 'local_admin',
-    qs_loc: 'locality',
-    name: 'neighborhood'
-  };
+  function completeSearch( id ){
+    var responses = responseMap[ id ];
+    delete responseMap[ id ];
+
+    var node = responses.node;
+    node.alpha3 = responses.admin1.qs_adm0_a3;
+    node.admin0 = responses.admin1.qs_adm0;
+    node.admin1 = responses.admin1.qs_a1;
+    node.admin2 = responses.admin1.qs_a1 || responses.neighborhood.name_adm2;
+    node.local_admin = responses.local_admin.qs_la;
+    node.locality = responses.locality.qs_loc;
+    node.neighborhood = responses.neighborhood.name;
+    responses.cb( node );
+  }
 
   var searchId = 0;
   /**
