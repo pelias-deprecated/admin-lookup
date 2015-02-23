@@ -23,6 +23,9 @@ function messageHandler( msg ){
     if( results !== undefined ){
       results = results.properties;
     }
+    else {
+      results = {};
+    }
     process.send({
       name: name,
       id: msg.id,

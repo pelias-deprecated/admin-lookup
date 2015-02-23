@@ -6,6 +6,7 @@
 var childProcess = require( 'child_process' );
 var peliasConfig = require( 'pelias-config' );
 var path = require( 'path' );
+var through = require( 'through2' );
 
 var quattroAdminLevels = [
   {
@@ -31,7 +32,9 @@ var quattroAdminLevels = [
   {
     name: 'neighborhood',
     path: 'neighborhoods',
-    props: [ 'name', 'name_adm0', 'name_adm1', 'name_adm2', 'name_lau', 'name_local' ]
+    props: [
+      'name', 'name_adm0', 'name_adm1', 'name_adm2', 'name_lau', 'name_local'
+    ]
   }
 ];
 
@@ -49,7 +52,7 @@ function initWorkers( cb ){
     var worker = childProcess.fork( __dirname + '/worker' );
     worker.on('message', function (){
       if( ++numLoadedLevels === quattroAdminLevels.length ){
-        cb(searchFromWorkers(workers));
+        cb( workers );
       }
     });
     workers.push( worker );
@@ -61,7 +64,7 @@ function initWorkers( cb ){
   });
 }
 
-function searchFromWorkers( workers ){
+function createLookup( workers ){
   /**
    * Assemble responses from different child processes in `responseMap`.
    */
@@ -82,25 +85,25 @@ function searchFromWorkers( workers ){
     var responses = responseMap[ id ];
     delete responseMap[ id ];
 
-    var node = responses.node;
-    node.alpha3 = responses.admin1.qs_adm0_a3;
-    node.admin0 = responses.admin1.qs_adm0;
-    node.admin1 = responses.admin1.qs_a1;
-    node.admin2 = responses.admin1.qs_a1 || responses.neighborhood.name_adm2;
-    node.local_admin = responses.local_admin.qs_la;
-    node.locality = responses.locality.qs_loc;
-    node.neighborhood = responses.neighborhood.name;
-    responses.cb( node );
+    var result = {};
+    result.alpha3 = responses.admin1.qs_adm0_a3;
+    result.admin0 = responses.admin1.qs_adm0;
+    result.admin1 = responses.admin1.qs_a1;
+    result.admin2 = responses.admin2.qs_a2 || responses.neighborhood.name_adm2;
+    result.local_admin = responses.local_admin.qs_la;
+    result.locality = responses.locality.qs_loc;
+    result.neighborhood = responses.neighborhood.name;
+    // console.log( JSON.stringify( result, undefined, 4 ) );
+    responses.cb( result );
   }
 
   var searchId = 0;
   /**
    * Search the Quattroshapes layers in `workers` for the given node.
    */
-  function search( node, cb ){
+  function search( latLon, cb ){
     searchId++;
     responseMap[ searchId ] = {
-      node: node,
       numResponses: 0,
       cb: cb
     };
@@ -108,7 +111,7 @@ function searchFromWorkers( workers ){
       worker.send({
         type: 'search',
         id: searchId,
-        coords: node.center_point
+        coords: latLon
       });
     });
   }
@@ -125,4 +128,42 @@ function searchFromWorkers( workers ){
   };
 }
 
-module.exports = initWorkers;
+function createLookupStream( workers ){
+  var lookup = createLookup( workers );
+  var adminLevelNames = [
+    'admin0', 'admin1', 'admin2', 'local_admin', 'locality', 'neighborhood'
+  ];
+
+  function write( model, _, next ){
+    lookup.search( model.getCentroid(), function ( results ){
+      model.setAlpha3( results.alpha3 );
+      adminLevelNames.forEach( function ( name ){
+        try {
+          model.setAdmin( name, results[ name ] );
+        }
+        catch ( ex ) {}
+      });
+      next( null, model );
+    });
+  }
+
+  function end( done ){
+    lookup.end();
+    done();
+  }
+
+  return through.obj( write, end );
+}
+
+module.exports = {
+  lookup: function (cb){
+    initWorkers( function ( workers ){
+       cb( createLookup( workers ) );
+    });
+  },
+  stream: function (cb){
+    initWorkers( function ( workers ){
+       cb( createLookupStream( workers ) );
+    });
+  }
+};
