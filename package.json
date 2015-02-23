@@ -15,7 +15,8 @@
     "through2": "0.6.3",
     "async": "0.9.0",
     "polygon-lookup": "^1.0.0",
-    "pelias-logger": "^0.x.x"
+    "pelias-logger": "^0.x.x",
+    "express": "^4.x.x"
   },
   "devDependencies": {
     "precommit-hook": "1.0.7",
