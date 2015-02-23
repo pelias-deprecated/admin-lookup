@@ -11,7 +11,7 @@ var lookupPoints = require( './lookup_points.json' );
 var util = require( 'util' );
 
 tape( 'Test actual lookup results against expected.', function ( test ){
-  supervisor( function ( lookup ){
+  supervisor.lookup( function ( lookup ){
     var numCompletedTestCases = 0;
 
     function lookupTestCase( testCase ){

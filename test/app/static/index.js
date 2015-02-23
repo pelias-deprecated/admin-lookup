@@ -9,7 +9,7 @@ var map; // the leaflet map
   'use strict';
 
   map = L.map( 'map' ).setView( [ 40.7259, -73.9806 ], 5 );
-  L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  L.tileLayer( '//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
     maxZoom: 18
   }).addTo(map);
   map.on( 'click', onClick );
