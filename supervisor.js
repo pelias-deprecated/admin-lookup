@@ -6,7 +6,6 @@
 var childProcess = require( 'child_process' );
 var peliasConfig = require( 'pelias-config' );
 var path = require( 'path' );
-var testPoints = require( './points.json' );
 
 var quattroAdminLevels = [
   {
@@ -47,10 +46,10 @@ function initWorkers( cb ){
   var quattroPath = config.imports.quattroshapes.datapath;
   var workers = [];
   quattroAdminLevels.forEach( function ( lvlConfig ){
-    var worker = childProcess.fork( './worker' );
+    var worker = childProcess.fork( __dirname + '/worker' );
     worker.on('message', function (){
       if( ++numLoadedLevels === quattroAdminLevels.length ){
-        cb(workers);
+        cb(searchFromWorkers(workers));
       }
     });
     workers.push( worker );
@@ -62,54 +61,11 @@ function initWorkers( cb ){
   });
 }
 
-initWorkers( function (workers){
-  // Used to store results from different processes while they get compiled
-  // into a full admin hierarchy per `search()`.
-  var responseMap = {};
-  var searchId = 0;
-
-  /**
-   * Search the Quattroshapes layers in `workers` for the given node.
-   */
-  function search( node ){
-    searchId++;
-    responseMap[ searchId ] = {
-      node: node,
-      numResponses: 0
-    };
-    workers.forEach( function ( worker ){
-      worker.send({
-        type: 'search',
-        id: searchId,
-        coords: node.center_point
-      });
-    });
-  }
-
-  var numSearchesCompleted = 0;
-  function searchCb( node ){
-    console.log( JSON.stringify( node, undefined, 4 ) );
-    if( ++numSearchesCompleted === testPoints.length ){
-      workers.forEach( function ( worker ){
-        worker.kill();
-      });
-    }
-  }
-
-  // Remap Quattro attribute names to more readable ones.
-  var adminNameProps = {
-    qs_adm0: 'admin0',
-    qs_adm0_a3: 'alpha3',
-    qs_a1: 'admin1',
-    qs_a2: 'admin2',
-    qs_la: 'localadmin',
-    qs_loc: 'locality',
-    name: 'neighborhood'
-  };
-
+function searchFromWorkers( workers ){
   /**
    * Assemble responses from different child processes in `responseMap`.
    */
+  var responseMap = {};
   workers.forEach( function ( worker ){
     worker.on( 'message', function ( resp ){
       var responses = responseMap[ resp.id ];
@@ -120,20 +76,55 @@ initWorkers( function (workers){
       }
       var hierarchyComplete = ++responses.numResponses === workers.length;
       if( hierarchyComplete ){
+        var cb = responseMap[ resp.id ].cb;
+        var node = responseMap[ resp.id ].node;
         delete responseMap[ resp.id ];
-        searchCb( responses.node );
+        cb( node );
       }
     });
   });
 
-  testPoints.forEach( function ( point ){
-    var node = {
-      name: point.name,
-      center_point: {
-        lat: point.lat,
-        lon: point.lon,
-      }
+  // Remap Quattro attribute names to more readable ones.
+  var adminNameProps = {
+    qs_adm0: 'admin0',
+    qs_adm0_a3: 'alpha3',
+    qs_a1: 'admin1',
+    qs_a2: 'admin2',
+    qs_la: 'local_admin',
+    qs_loc: 'locality',
+    name: 'neighborhood'
+  };
+
+  var searchId = 0;
+  /**
+   * Search the Quattroshapes layers in `workers` for the given node.
+   */
+  function search( node, cb ){
+    searchId++;
+    responseMap[ searchId ] = {
+      node: node,
+      numResponses: 0,
+      cb: cb
     };
-    search( node );
-  });
-});
+    workers.forEach( function ( worker ){
+      worker.send({
+        type: 'search',
+        id: searchId,
+        coords: node.center_point
+      });
+    });
+  }
+
+  function end(){
+    workers.forEach( function ( worker ){
+      worker.kill();
+    });
+  }
+
+  return {
+    search: search,
+    end: end
+  };
+}
+
+module.exports = initWorkers;
