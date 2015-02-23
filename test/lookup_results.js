@@ -15,8 +15,7 @@ tape( 'Test actual lookup results against expected.', function ( test ){
     var numCompletedTestCases = 0;
 
     function lookupTestCase( testCase ){
-      var node = { center_point: testCase.point };
-      lookup.search( node, function ( result ){
+      lookup.search( testCase.point, function ( result ){
         for( var key in testCase.expected ){
           var msg = util.format(
             '`%s` matches expected for %s.',
