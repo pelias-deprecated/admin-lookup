@@ -6,7 +6,9 @@
   "author": "mapzen",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js | tap-spec"
+    "test": "node test/test.js | tap-spec",
+    "test-web-app": "node test/app/server.js",
+    "test-lookups": "node test/lookup_results.js | tap-spec"
   },
   "dependencies": {
     "pelias-config": "^0.x.x",
@@ -15,13 +17,13 @@
     "through2": "0.6.3",
     "async": "0.9.0",
     "polygon-lookup": "^1.0.0",
-    "pelias-logger": "^0.x.x",
-    "express": "^4.x.x"
+    "pelias-logger": "^0.x.x"
   },
   "devDependencies": {
     "precommit-hook": "1.0.7",
     "tape": "3.0.3",
-    "tap-spec": "2.1.2"
+    "tap-spec": "2.1.2",
+    "express": "^4.x.x"
   },
   "repository": {
     "type": "git",
