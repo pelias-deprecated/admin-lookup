@@ -1,5 +1,5 @@
 /**
- * @file vv
+ * @file The web-app server.
  */
 
 'use strict';
