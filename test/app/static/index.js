@@ -13,6 +13,7 @@ var map; // the leaflet map
     maxZoom: 18
   }).addTo(map);
   map.on( 'click', onClick );
+  console.log( 'Test cases ready to be inserted into `lookup_points.json` will get printed here.' );
 })();
 
 /**
@@ -24,8 +25,11 @@ function onClick( evt ){
 
   var latlng = evt.latlng;
   var nameProps = reversePoint( latlng.lat, latlng.lng );
-  var names = [];
 
+  var testCase = { point: latlng, expected: nameProps };
+  console.log( JSON.stringify( testCase, undefined, 4 ) );
+
+  var names = [];
   var nameOrder = [
     'neighborhood', 'locality', 'local_admin', 'admin2', 'admin1', 'admin0',
     'alpha3'
@@ -37,7 +41,7 @@ function onClick( evt ){
   var name = names.join( '<br>' );
 
   L.marker( [ latlng.lat, latlng.lng ] )
-    .bindLabel( name, { noHide: true } )
+    .bindLabel( name, { noHide: true, clickable: true } )
     .addTo( map );
 }
 
