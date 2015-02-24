@@ -49,7 +49,7 @@ function initWorkers( cb ){
   var quattroPath = config.imports.quattroshapes.datapath;
   var workers = [];
   quattroAdminLevels.forEach( function ( lvlConfig ){
-    var worker = childProcess.fork( __dirname + '/worker' );
+    var worker = childProcess.fork( path.join( __dirname, 'lib/worker' ) );
     worker.on('message', function (){
       if( ++numLoadedLevels === quattroAdminLevels.length ){
         cb( workers );
