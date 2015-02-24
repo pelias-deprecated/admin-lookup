@@ -45,3 +45,14 @@ peliasAdminLookup.stream( function( lookupStream ){
 The admin-lookup loads over a gigabyte of data into memory, which exceeds Node's *de facto* limit and will eventually
 cause the process to freeze up (as the garbage collector churns away attempting to reclaim memory). As a result, it'll
 fork a child process per admin layer for multiple V8 heaps and slightly simplify polygons.
+
+## acceptance tests
+The package ships with a minimal unit-testing suite (`npm test`), and with two more comprehensive testing methods:
+
+  * `npm run test-lookups`: will load the admin-lookup and run it against the test-cases found in
+    `test/lookup_points.json`, reporting any mismatches.
+  * `npm run test-web-app`: a tool that'll load the admin-lookup, and serve a dead-simple browser app that allows you
+    to pan around a map and receive lookup results for the points that you click on. Should make it easy to continually
+    test the package while modifying it.
+
+At the least, run `test-lookups` locally after introducing a change!
