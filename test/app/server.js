@@ -5,9 +5,9 @@
 'use strict';
 
 var express = require( 'express' );
-var supervisor = require( '../../supervisor' );
+var peliasAdminLookup = require( '../../' );
 
-supervisor.lookup( function ( lookup ){
+peliasAdminLookup.lookup( function ( lookup ){
   var app = express();
   app.use(express.static(__dirname + '/static'));
   app.get( '/reverse/:lat/:lon', function ( req, res ){
