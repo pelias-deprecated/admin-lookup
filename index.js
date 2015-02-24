@@ -1,175 +1,168 @@
 /**
- * @file Create a Transform stream that reverse-geocodes incoming pelias-model
- * `Document`s against the Quattroshapes polygon dataset, and sets their
- * admin/alpha3 properties accordingly. Note that it will load the entire
- * dataset into memory, which makes it incredibly fast, but requires just about
- * a gigabyte of RAM (meaning that a 64-bit machine is ideal, on which Node has
- * a default 1gb memory limit instead of 512mb on 32-bit machines).
+ * Warning: this is entirely a WIP proof-of-concept. Forks a `./worker`
+ * process per admin level and loads one Quattroshapes layer into it.
  */
 
-'use strict';
-
+var childProcess = require( 'child_process' );
+var peliasConfig = require( 'pelias-config' );
 var path = require( 'path' );
 var through = require( 'through2' );
-var peliasConfig = require( 'pelias-config' );
-var logger = require( 'pelias-logger' ).get( 'admin-lookup' );
-var async = require( 'async' );
-var loadShapefile = require( './lib/load_shapefile' );
+
+var quattroAdminLevels = [
+  {
+    name: 'admin1',
+    path: 'adm1',
+    props: [ 'qs_adm0', 'qs_adm0_a3', 'qs_a1' ]
+  },
+  {
+    name: 'admin2',
+    path: 'adm2',
+    props: [ 'qs_a2' ]
+  },
+  {
+    name: 'local_admin',
+    path: 'localadmin',
+    props: [ 'qs_la' ]
+  },
+  {
+    name: 'locality',
+    path: 'localities',
+    props: [ 'qs_loc' ]
+  },
+  {
+    name: 'neighborhood',
+    path: 'neighborhoods',
+    props: [
+      'name', 'name_adm0', 'name_adm1', 'name_adm2', 'name_lau', 'name_local'
+    ]
+  }
+];
 
 /**
- * Asynchronously create the administrative lookup stream.
- *
- * @param {function} createStreamCb The callback that will be passed the
- *    completed lookup stream when all polygons are loaded.
+ * Initialize all child processes, and pass an array of them to `cb()` when
+ * they've all finished loading Quattroshapes.
  */
-function createLookupStream( createStreamCb ){
-  var quattroAdminLevels = [
-    {
-      name: 'admin1',
-      path: 'adm1',
-      props: [ 'qs_adm0', 'qs_adm0_a3', 'qs_a1' ]
-    },
-    {
-      name: 'admin2',
-      path: 'adm2',
-      props: [ 'qs_a2' ]
-    },
-    {
-      name: 'localadmin',
-      path: 'localadmin',
-      props: [ 'qs_la' ]
-    },
-    {
-      name: 'locality',
-      path: 'localities',
-      props: [ 'qs_loc' ]
-    },
-    {
-      name: 'neighborhood',
-      path: 'neighborhoods',
-      props: [ 'name' ]
-    }
-  ];
+function initWorkers( cb ){
+  var numLoadedLevels = 0;
 
   var config = peliasConfig.generate();
   var quattroPath = config.imports.quattroshapes.datapath;
-
-  var lookups = {};
-
-  logger.info( 'Creating quattroshapes polygon lookups.' );
-  function asyncIterate( config, iterateCb ){
-    function lookupFromShapefileCb( lookup, lvl ){
-      logger.info( 'Finished loading:', lvl );
-      lookups[ lvl ] = lookup;
-      iterateCb();
-    }
-
-    config.path = path.join( quattroPath, 'qs_' + config.path );
-    loadShapefile.load( config, lookupFromShapefileCb );
-  }
-
-  function asyncDone(){
-    logger.info( 'Finished creating lookups.' );
-    createStreamCb( streamFromLookups( lookups ) );
-  }
-
-  async.each( quattroAdminLevels, asyncIterate, asyncDone);
+  var workers = [];
+  quattroAdminLevels.forEach( function ( lvlConfig ){
+    var worker = childProcess.fork( __dirname + '/worker' );
+    worker.on('message', function (){
+      if( ++numLoadedLevels === quattroAdminLevels.length ){
+        cb( workers );
+      }
+    });
+    workers.push( worker );
+    lvlConfig.path = path.join( quattroPath, 'qs_' + lvlConfig.path );
+    worker.send( {
+      type: 'load',
+      config: lvlConfig
+    });
+  });
 }
 
-/**
- * Called by `createLookupStream()`.
- *
- * @param {object} lookups Maps the names of the administrative layers,
- *    'admin1', 'admin2', etc, to the `PolygonLookup` object loaded with that
- *    layer's polygons.
- * @return {Transform stream} A stream that expects pelias-model `Document`
- *    objets and intersects them against each of the layers in `lookups`,
- *    setting their admin values (via `setAdmin()`) accordingly.
- */
-function streamFromLookups( lookups ){
-  var adminNameProps = {
-    admin2: 'qs_a2',
-    localadmin: 'qs_la',
-    locality: 'qs_loc',
-    neighborhood: 'name'
-  };
+function createLookup( workers ){
+  /**
+   * Assemble responses from different child processes in `responseMap`.
+   */
+  var responseMap = {};
+  workers.forEach( function ( worker ){
+    worker.on( 'message', function ( resp ){
+      var responses = responseMap[ resp.id ];
+      responses[ resp.name ] = resp.results;
 
-  var stats = {
-    search: {
-      admin1: 0,
-      admin2: 0,
-      localadmin: 0,
-      locality: 0,
-      neighborhood: 0
-    },
-    set: {
-      admin0: 0,
-      admin1: 0,
-      alpha3: 0,
-      admin2: 0,
-      localadmin: 0,
-      locality: 0,
-      neighborhood: 0
-    }
-  };
+      var hierarchyComplete = ++responses.numResponses === workers.length;
+      if( hierarchyComplete ){
+        completeSearch( resp.id );
+      }
+    });
+  });
 
-  var intervalId = setInterval( function logStats(  ){
-    logger.verbose( 'Search misses:', stats.search );
-    logger.verbose( 'Set fails:', stats.set );
-  }, 1e4);
+  function completeSearch( id ){
+    var responses = responseMap[ id ];
+    delete responseMap[ id ];
+
+    var result = {};
+    result.alpha3 = responses.admin1.qs_adm0_a3;
+    result.admin0 = responses.admin1.qs_adm0;
+    result.admin1 = responses.admin1.qs_a1;
+    result.admin2 = responses.admin2.qs_a2 || responses.neighborhood.name_adm2;
+    result.local_admin = responses.local_admin.qs_la;
+    result.locality = responses.locality.qs_loc;
+    result.neighborhood = responses.neighborhood.name;
+    responses.cb( result );
+  }
+
+  var searchId = 0;
+  /**
+   * Search the Quattroshapes layers in `workers` for the given node.
+   */
+  function search( latLon, cb ){
+    searchId++;
+    responseMap[ searchId ] = {
+      numResponses: 0,
+      cb: cb
+    };
+    workers.forEach( function ( worker ){
+      worker.send({
+        type: 'search',
+        id: searchId,
+        coords: latLon
+      });
+    });
+  }
+
+  function end(){
+    workers.forEach( function ( worker ){
+      worker.kill();
+    });
+  }
+
+  return {
+    search: search,
+    end: end
+  };
+}
+
+function createLookupStream( workers ){
+  var lookup = createLookup( workers );
+  var adminLevelNames = [
+    'admin0', 'admin1', 'admin2', 'local_admin', 'locality', 'neighborhood'
+  ];
 
   function write( model, _, next ){
-    var pt = model.getCentroid();
-
-    var adm1 = lookups.admin1.search( pt.lon, pt.lat );
-    if( adm1 !== undefined ){
-      try {
-        model.setAdmin( 'admin0', adm1.properties.qs_adm0 );
-      } catch( ex ){
-        stats.set.admin0++;
-      }
-
-      try {
-        model.setAdmin( 'admin1', adm1.properties.qs_a1 );
-      } catch( ex ){
-        stats.set.admin1++;
-      }
-
-      try {
-        model.setAlpha3( adm1.properties.qs_adm0_a3 );
-      } catch( ex ){
-        stats.set.alpha3++;
-      }
-    }
-    else {
-      stats.search.admin1++;
-    }
-
-    for( var lvl in adminNameProps ){
-      var poly = lookups[ lvl ].search( pt.lon, pt.lat );
-      if( poly !== undefined ){
-        var name = poly.properties[ adminNameProps[ lvl ] ];
+    lookup.search( model.getCentroid(), function ( results ){
+      model.setAlpha3( results.alpha3 );
+      adminLevelNames.forEach( function ( name ){
         try {
-          model.setAdmin( lvl, name );
-        } catch( ex ){
-          stats.set[ lvl ]++;
+          model.setAdmin( name, results[ name ] );
         }
-      }
-      else {
-        stats.search[ lvl ]++;
-      }
-    }
-
-    this.push( model ); // jshint ignore:line
-    next();
+        catch ( ex ) {}
+      });
+      next( null, model );
+    });
   }
 
   function end( done ){
-    clearInterval( intervalId );
+    lookup.end();
     done();
   }
 
   return through.obj( write, end );
 }
 
-module.exports = createLookupStream;
+module.exports = {
+  lookup: function (cb){
+    initWorkers( function ( workers ){
+       cb( createLookup( workers ) );
+    });
+  },
+  stream: function (cb){
+    initWorkers( function ( workers ){
+       cb( createLookupStream( workers ) );
+    });
+  }
+};
