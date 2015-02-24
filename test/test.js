@@ -59,7 +59,7 @@ tape( 'simplifyCoords() simplifies coordinates.', function ( test ){
 });
 
 tape( 'Module interfaces.', function ( test ){
-  test.equal( typeof index, 'function', 'index is a function.' );
+  test.equal( typeof index, 'object', 'index is an object.' );
   test.equal( typeof loadShapefile, 'object', 'loadShapefile is an object.' );
   test.end();
 });

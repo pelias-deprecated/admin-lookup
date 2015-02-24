@@ -1,6 +1,7 @@
 /**
- * Warning: this is entirely a WIP proof-of-concept. Forks a `./worker`
- * process per admin level and loads one Quattroshapes layer into it.
+ * High-level module that melds together all the other components of the
+ * package into a clean API. See the referenced modules for relevant
+ * per-function documentation.
  */
 
 var master = require( './lib/master' );
