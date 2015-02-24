@@ -9,13 +9,26 @@ way, and creates a `Transform` stream that builds the administrative name hierar
 `alpha3`, etc) for incoming `pelias-model` `Document` objects via their setter methods. Useful if you want to
 automagically populate a dataset with country/state/county/neighborhood names when it's missing them.
 
+Quattroshapes files will be read from the path specified in your local `pelias-config`: if you'd like to override it,
+drop this into `~/pelias.json`:
+
+```
+{
+  "imports": {
+    "quattroshapes": {
+      "datapath": "/path/to/my/Quattroshapes/"
+    }
+  }
+}
+```
+
+It's recommended that you use our [simplified version](http://data.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz),
+and even then, expect to load over a gigabyte of data into RAM. It's consequently a good idea to use this on a 64-bit
+machine, on which Node has a default 1gb memory limit instead of 512mb on 32-bit systems.
+
 ## API
 ##### `lookup( cb )`
-Asynchronously builds the admin lookup. Quattroshapes shapefiles will be read from the path specified in
-`pelias-config`; it's recommended that you use our [simplified
-version](http://data.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz), and even then, expect to load over a
-gigabyte of data into RAM. It's consequently a good idea to use this on a 64-bit machine, on which Node has a default
-1gb memory limit instead of 512mb on 32-bit systems.
+Asynchronously builds the admin lookup.
 
   * `cb`: the callback that will be passed an object containing `search` and `end` functions. `search` accepts a
     `{lat:, lon:}` object and returns an object containing admin-level names. `end()` must be called when you're
