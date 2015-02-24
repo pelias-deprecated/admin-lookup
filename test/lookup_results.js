@@ -16,13 +16,22 @@ tape( 'Test actual lookup results against expected.', function ( test ){
 
     function lookupTestCase( testCase ){
       lookup.search( testCase.point, function ( result ){
+        var failed = false;
         for( var key in testCase.expected ){
-          var msg = util.format(
-            '`%s` matches expected for %s.',
-            key, JSON.stringify( testCase.point )
-          );
-          test.equal( result[ key ], testCase.expected[ key ], msg);
+          if( result[ key ] !== testCase.expected[ key ] ){
+            failed = true;
+            var msg = util.format(
+              '`%s` does not match for %s.',
+              key, JSON.stringify( testCase.point )
+            );
+            test.fail( msg );
+          }
         }
+
+        if( !failed ){
+          test.pass( 'Test passed for: ' + JSON.stringify( testCase.point ) );
+        }
+
         if( ++numCompletedTestCases === lookupPoints.length ){
           lookup.end();
           test.end();
