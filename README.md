@@ -10,14 +10,23 @@ way, and creates a `Transform` stream that builds the administrative name hierar
 automagically populate a dataset with country/state/county/neighborhood names when it's missing them.
 
 ## API
-##### `createLookupStream( createStreamCb )`
-Asynchronously builds the lookup stream. Quattroshapes shapefiles will be read from the path specified in
+##### `lookup( cb )`
+Asynchronously builds the admin lookup. Quattroshapes shapefiles will be read from the path specified in
 `pelias-config`; it's recommended that you use our [simplified
-version](http://data.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz), and even then, expect to load nearly a
+version](http://data.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz), and even then, expect to load over a
 gigabyte of data into RAM. It's consequently a good idea to use this on a 64-bit machine, on which Node has a default
 1gb memory limit instead of 512mb on 32-bit systems.
 
-* `createStreamCb`: the callback that will be passed the lookup stream once it's complete.
+  * `cb`: the callback that will be passed an object containing `search` and `end` functions. `search` accepts a
+    `{lat:, lon:}` object and returns an object containing admin-level names. `end()` must be called when you're
+    finished with the lookup, to perform all necessary cleanup.
+
+##### `stream( cb )`
+A wrapper for `createLookup()` that asynchronously builds a lookup stream. It'll expect
+[pelias-model](https://github.com/pelias/model) `Document`s, and call their `set*()` setters with the results of the
+lookup.
+
+  * `cb`: the callback that will be passed the lookup stream once it's assembled.
 
 ## example usage
 
@@ -25,9 +34,14 @@ gigabyte of data into RAM. It's consequently a good idea to use this on a 64-bit
 var peliasAdminLookup = require( 'pelias-admin-lookup' );
 
 var dataStream = /* some stream of Document objects */;
-peliasAdminLookup( function( lookupStream ){
+peliasAdminLookup.stream( function( lookupStream ){
 	dataStream
 		.pipe( lookupStream )
 		.pipe( /* down the pelias pipeline */ );
 });
 ```
+
+## technical note
+The admin-lookup loads over a gigabyte of data into memory, which exceeds Node's *de facto* limit and will eventually
+cause the process to freeze up (as the garbage collector churns away attempting to reclaim memory). As a result, it'll
+fork a child process per admin layer for multiple V8 heaps and slightly simplify polygons.
