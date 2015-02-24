@@ -26,7 +26,10 @@ function onClick( evt ){
   var latlng = evt.latlng;
   var nameProps = reversePoint( latlng.lat, latlng.lng );
 
-  var testCase = { point: latlng, expected: nameProps };
+  var testCase = {
+    point: {lat: latlng.lat, lon: latlng.lng},
+    expected: nameProps
+  };
   console.log( JSON.stringify( testCase, undefined, 4 ) );
 
   var names = [];

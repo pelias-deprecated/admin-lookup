@@ -93,7 +93,6 @@ function createLookup( workers ){
     result.local_admin = responses.local_admin.qs_la;
     result.locality = responses.locality.qs_loc;
     result.neighborhood = responses.neighborhood.name;
-    // console.log( JSON.stringify( result, undefined, 4 ) );
     responses.cb( result );
   }
 
