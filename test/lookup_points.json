@@ -1,0 +1,119 @@
+[
+	{
+		"point": {
+			"lon": -73.990342,
+			"lat": 40.744243
+		},
+		"expected": {
+			"admin0": "United States",
+			"admin1": "New York",
+			"alpha3": "USA",
+			"admin2": "New York",
+			"locality": "New York",
+			"local_admin": "Manhattan",
+			"neighborhood": "Flatiron District"
+		}
+	},
+	{
+		"point": {
+			"lon": -0.066717,
+			"lat": 51.531766
+		},
+		"expected": {
+			"admin0": "United Kingdom",
+			"admin1": "Hackney",
+			"alpha3": "GBR",
+			"locality": "London",
+			"neighborhood": "Haggerston"
+		}
+	},
+	{
+		"point": {
+			"lat": 40.71850156790217,
+			"lon": -74.01667356491089
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "New York",
+			"admin2": "New York",
+			"local_admin": "Manhattan",
+			"locality": "New York",
+			"neighborhood": "Battery Park City"
+		}
+	},
+	{
+		"point": {
+			"lat": 40.69288604335791,
+			"lon": -74.01939332485199
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "New York",
+			"admin2": "New York",
+			"local_admin": "Manhattan",
+			"locality": "New York",
+			"neighborhood": "Fort Jay"
+		}
+	},
+	{
+		"point": {
+			"lat": 40.73984369892997,
+			"lon": -74.0296983718872
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "New Jersey",
+			"admin2": "Hudson",
+			"local_admin": "Hoboken",
+			"locality": "Hoboken",
+			"neighborhood": "Newport"
+		}
+	},
+	{
+		"point": {
+			"lat": 40.70777507149538,
+			"lon": -73.90605926513672
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "New York",
+			"admin2": "Queens",
+			"local_admin": "Queens",
+			"locality": "New York",
+			"neighborhood": "Ridgewood"
+		}
+	},
+	{
+		"point": {
+			"lat": 40.723209620612145,
+			"lon": -74.00146007537842
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "New York",
+			"admin2": "New York",
+			"local_admin": "Manhattan",
+			"locality": "New York",
+			"neighborhood": "Soho"
+		}
+	},
+	{
+		"point": {
+			"lat": 37.323007681574374,
+			"lon": -122.03158378601076
+		},
+		"expected": {
+			"alpha3": "USA",
+			"admin0": "United States",
+			"admin1": "California",
+			"admin2": "Santa Clara",
+			"locality": "Cupertino",
+			"neighborhood": "Monta Vista"
+		}
+	}
+]

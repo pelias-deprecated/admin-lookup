@@ -44,6 +44,8 @@ tape( 'simplifyCoords() simplifies coordinates.', function ( test ){
 
   var expected = [
     [ -88.17948, 33.150064 ],
+    [ -88.173956, 33.150068 ],
+    [ -88.171263, 33.147854 ],
     [ -88.171291, 33.146395 ],
     [ -88.179577, 33.14642 ],
     [ -88.17948, 33.150064 ]
@@ -57,7 +59,7 @@ tape( 'simplifyCoords() simplifies coordinates.', function ( test ){
 });
 
 tape( 'Module interfaces.', function ( test ){
-  test.equal( typeof index, 'function', 'index is a function.' );
+  test.equal( typeof index, 'object', 'index is an object.' );
   test.equal( typeof loadShapefile, 'object', 'loadShapefile is an object.' );
   test.end();
 });
