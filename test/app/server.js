@@ -5,7 +5,7 @@
 'use strict';
 
 var express = require( 'express' );
-var peliasAdminLookup = require( '../../' );
+var peliasAdminLookup = require( '../../lib/master' );
 
 peliasAdminLookup.lookup( function ( lookup ){
   var app = express();

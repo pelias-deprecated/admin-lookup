@@ -6,7 +6,7 @@
 'use strict';
 
 var tape = require( 'tape' );
-var supervisor = require( '../');
+var supervisor = require( '../lib/master' );
 var lookupPoints = require( './lookup_points.json' );
 var util = require( 'util' );
 
