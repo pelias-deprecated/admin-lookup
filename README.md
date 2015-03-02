@@ -34,24 +34,20 @@ Asynchronously builds the admin lookup.
     `{lat:, lon:}` object and returns an object containing admin-level names. `end()` must be called when you're
     finished with the lookup, to perform all necessary cleanup.
 
-##### `stream( cb )`
-A wrapper for `createLookup()` that asynchronously builds a lookup stream. It'll expect
+##### `stream()`
+A wrapper for `createLookup()` that **pseudo-synchronously** builds a lookup stream. It'll expect
 [pelias-model](https://github.com/pelias/model) `Document`s, and call their `set*()` setters with the results of the
-lookup.
-
-  * `cb`: the callback that will be passed the lookup stream once it's assembled.
+lookup. The stream will be returned immediately, but won't process records until `lookup()`, which is called
+internally, returns.
 
 ## example usage
 
 ```javascript
 var peliasAdminLookup = require( 'pelias-admin-lookup' );
 
-var dataStream = /* some stream of Document objects */;
-peliasAdminLookup.stream( function( lookupStream ){
-	dataStream
-		.pipe( lookupStream )
-		.pipe( /* down the pelias pipeline */ );
-});
+dataStream
+	.pipe(peliasAdminLookup.stream())
+	.pipe( /* down the pelias pipeline */ );
 ```
 
 ## technical note
