@@ -3,7 +3,7 @@
  */
 
 var tape = require( 'tape' );
-var index = require( '../index' );
+var master = require( '../lib/master' );
 var loadShapefile = require( '../lib/load_shapefile' );
 
 tape( 'extractProps() extracts properties.', function ( test ){
@@ -59,7 +59,7 @@ tape( 'simplifyCoords() simplifies coordinates.', function ( test ){
 });
 
 tape( 'Module interfaces.', function ( test ){
-  test.equal( typeof index, 'object', 'index is an object.' );
-  test.equal( typeof loadShapefile, 'object', 'loadShapefile is an object.' );
+  test.equal( typeof master, 'object', 'master `exports` is an object.' );
+  test.equal( typeof loadShapefile, 'object', '`loadShapefile` exports is an object.' );
   test.end();
 });
