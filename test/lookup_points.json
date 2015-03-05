@@ -11,7 +11,9 @@
 			"admin2": "New York",
 			"locality": "New York",
 			"local_admin": "Manhattan",
-			"neighborhood": "Flatiron District"
+			"neighborhood": "Flatiron District",
+			"population": 1585873,
+			"popularity": 8298486
 		}
 	},
 	{
@@ -24,7 +26,9 @@
 			"admin1": "Hackney",
 			"alpha3": "GBR",
 			"locality": "London",
-			"neighborhood": "Haggerston"
+			"neighborhood": "Haggerston",
+			"population": 8278251,
+			"popularity": 1690336
 		}
 	},
 	{
@@ -39,7 +43,9 @@
 			"admin2": "New York",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Battery Park City"
+			"neighborhood": "Battery Park City",
+			"population": 1585873,
+			"popularity": 8298486
 		}
 	},
 	{
@@ -54,7 +60,9 @@
 			"admin2": "New York",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Fort Jay"
+			"neighborhood": "Fort Jay",
+			"population": 1585873,
+			"popularity": 8298486
 		}
 	},
 	{
@@ -69,7 +77,9 @@
 			"admin2": "Hudson",
 			"local_admin": "Hoboken",
 			"locality": "Hoboken",
-			"neighborhood": "Newport"
+			"neighborhood": "Newport",
+			"population": 50005,
+			"popularity": 511475
 		}
 	},
 	{
@@ -84,7 +94,9 @@
 			"admin2": "Queens",
 			"local_admin": "Queens",
 			"locality": "New York",
-			"neighborhood": "Ridgewood"
+			"neighborhood": "Ridgewood",
+			"population": 2230722,
+			"popularity": 5751444
 		}
 	},
 	{
@@ -99,7 +111,9 @@
 			"admin2": "New York",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Soho"
+			"neighborhood": "Soho",
+			"population": 1585873,
+			"popularity": 8298486
 		}
 	},
 	{
@@ -113,7 +127,8 @@
 			"admin1": "California",
 			"admin2": "Santa Clara",
 			"locality": "Cupertino",
-			"neighborhood": "Monta Vista"
+			"neighborhood": "Monta Vista",
+			"popularity": 6033682
 		}
 	}
 ]
