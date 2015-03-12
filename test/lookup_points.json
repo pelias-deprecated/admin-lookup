@@ -1,6 +1,30 @@
 [
 	{
 		"point": {
+			"lon": 28.4960926331573,
+			"lat": 45.4035864648678
+		},
+		"expected": {
+			"alpha3": "MDA",
+			"admin0": "Ukraine",
+			"admin1": "Одеська",
+			"admin2": "Reniis'kyi"
+		}
+	},
+	{
+		"point": {
+			"lon": 13.8730611362194,
+			"lat": 50.9167986533314
+		},
+		"expected": {
+			"alpha3": "DEU",
+			"admin0": "Germany",
+			"admin1": "Sachsen",
+			"admin2": "Saechsische Schweiz-Osterzgebirge"
+		}
+	},
+	{
+		"point": {
 			"lon": -73.990342,
 			"lat": 40.744243
 		},
@@ -8,7 +32,7 @@
 			"admin0": "United States",
 			"admin1": "New York",
 			"alpha3": "USA",
-			"admin2": "New York",
+			"admin2": "New York County",
 			"locality": "New York",
 			"local_admin": "Manhattan",
 			"neighborhood": "Flatiron District"
@@ -22,6 +46,7 @@
 		"expected": {
 			"admin0": "United Kingdom",
 			"admin1": "Hackney",
+			"admin2": "Greater London",
 			"alpha3": "GBR",
 			"locality": "London",
 			"neighborhood": "Haggerston"
@@ -36,7 +61,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "New York",
-			"admin2": "New York",
+			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
 			"neighborhood": "Battery Park City"
@@ -51,7 +76,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "New York",
-			"admin2": "New York",
+			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
 			"neighborhood": "Fort Jay"
@@ -66,7 +91,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "New Jersey",
-			"admin2": "Hudson",
+			"admin2": "Hudson County",
 			"local_admin": "Hoboken",
 			"locality": "Hoboken",
 			"neighborhood": "Newport"
@@ -81,7 +106,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "New York",
-			"admin2": "Queens",
+			"admin2": "Queens County",
 			"local_admin": "Queens",
 			"locality": "New York",
 			"neighborhood": "Ridgewood"
@@ -96,7 +121,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "New York",
-			"admin2": "New York",
+			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
 			"neighborhood": "Soho"
@@ -111,7 +136,7 @@
 			"alpha3": "USA",
 			"admin0": "United States",
 			"admin1": "California",
-			"admin2": "Santa Clara",
+			"admin2": "Santa Clara County",
 			"locality": "Cupertino",
 			"neighborhood": "Monta Vista"
 		}
