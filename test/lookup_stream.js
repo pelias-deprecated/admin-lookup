@@ -11,14 +11,15 @@ var lookup = require( '../lib/master' );
 var peliasModel = require( 'pelias-model' );
 var tape = require( 'tape' );
 
-var lookupStreamResults = require( './lookup_stream.json' );
+var lookupPoints = require( './lookup_points.json' );
 
 /**
  * Test whether the setter stream sets values properly.
  */
 tape( 'Test setter stream.', function ( test ){
-  var pts = lookupStreamResults.points;
-  var expectedValues = lookupStreamResults.expectedValues;
+  var expectedValues = lookupPoints.map( function ( testCase ){
+    return testCase.expected;
+  });
 
   var adminLevelNames = [
     'admin0', 'admin1', 'admin2', 'local_admin', 'locality', 'neighborhood'
@@ -44,8 +45,9 @@ tape( 'Test setter stream.', function ( test ){
   );
 
   lookupStream.pipe( testPipe );
-  pts.forEach( function ( pt ){
-    lookupStream.write( new peliasModel.Document( '_', 1 ).setCentroid( pt ) );
+  lookupPoints.forEach( function ( testCase ){
+    var doc = new peliasModel.Document( '_', 1 ).setCentroid( testCase.point );
+    lookupStream.write( doc );
   });
   lookupStream.end();
 });
