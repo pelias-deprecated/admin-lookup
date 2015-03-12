@@ -1,0 +1,98 @@
+{
+	"points": [
+		{ "lat": 45.4035864648678, "lon": 28.4960926331573 },
+		{ "lat": 50.9167986533314, "lon": 13.8730611362194 },
+		{ "lat": 40.744243, "lon": -73.990342 },
+		{ "lat": 51.531766, "lon": -0.066717 },
+		{ "lon": -74.01667356491089, "lat": 40.71850156790217 },
+		{ "lon": -74.01939332485199, "lat": 40.69288604335791 },
+		{ "lon": -74.0296983718872, "lat": 40.73984369892997 },
+		{ "lon": -73.90605926513672, "lat": 40.70777507149538 },
+		{ "lon": -74.00146007537842, "lat": 40.723209620612145 },
+		{ "lon": -122.03158378601076, "lat": 37.323007681574374 }
+	],
+	"expectedValues": [
+		{
+			"admin2": "Reniis'kyi",
+			"admin1": "Одеська",
+			"admin0": "Ukraine",
+			"alpha3": "MDA"
+		},
+		{
+			"admin2": "Saechsische Schweiz-Osterzgebirge",
+			"admin1": "Sachsen",
+			"admin0": "Germany",
+			"alpha3": "DEU"
+		},
+		{
+			"neighborhood": "Flatiron District",
+			"local_admin": "Manhattan",
+			"locality": "New York",
+			"admin2": "New York County",
+			"alpha3": "USA",
+			"admin1": "New York",
+			"admin0": "United States"
+		},
+		{
+			"neighborhood": "Haggerston",
+			"locality": "London",
+			"alpha3": "GBR",
+			"admin2": "Greater London",
+			"admin1": "Hackney",
+			"admin0": "United Kingdom"
+		},
+		{
+			"neighborhood": "Battery Park City",
+			"locality": "New York",
+			"local_admin": "Manhattan",
+			"admin2": "New York County",
+			"admin1": "New York",
+			"admin0": "United States",
+			"alpha3": "USA"
+		},
+		{
+			"neighborhood": "Fort Jay",
+			"locality": "New York",
+			"local_admin": "Manhattan",
+			"admin2": "New York County",
+			"admin1": "New York",
+			"admin0": "United States",
+			"alpha3": "USA"
+		},
+		{
+			"neighborhood": "Newport",
+			"locality": "Hoboken",
+			"local_admin": "Hoboken",
+			"admin2": "Hudson County",
+			"admin1": "New Jersey",
+			"admin0": "United States",
+			"alpha3": "USA"
+		},
+		{
+			"neighborhood": "Ridgewood",
+			"locality": "New York",
+			"local_admin": "Queens",
+			"admin2": "Queens County",
+			"admin1": "New York",
+			"admin0": "United States",
+			"alpha3": "USA"
+		},
+		{
+			"neighborhood": "Soho",
+			"locality": "New York",
+			"local_admin": "Manhattan",
+			"admin2": "New York County",
+			"admin1": "New York",
+			"admin0": "United States",
+			"alpha3": "USA"
+		},
+		{
+			"neighborhood": "Monta Vista",
+			"locality": "Cupertino",
+			"admin2": "Santa Clara County",
+			"admin1": "California",
+			"admin0": "United States",
+			"alpha3": "USA"
+		}
+	]
+}
