@@ -22,7 +22,7 @@ drop this into `~/pelias.json`:
 }
 ```
 
-It's recommended that you use our [simplified version](http://data.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz),
+It's recommended that you use our [simplified version](http://quattroshapes.mapzen.com/quattroshapes/quattroshapes-simplified.tar.gz),
 and even then, expect to load over a gigabyte of data into RAM. It's consequently a good idea to use this on a 64-bit
 machine, on which Node has a default 1gb memory limit instead of 512mb on 32-bit systems.
 
