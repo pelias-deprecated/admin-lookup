@@ -8,7 +8,8 @@
   "scripts": {
     "test": "node test/test.js | tap-spec",
     "test-web-app": "node test/app/server.js",
-    "test-lookups": "node test/lookup_results.js | tap-spec"
+    "test-lookups": "node test/lookup_results.js | tap-spec",
+    "test-stream": "node test/lookup_stream.js | tap-spec"
   },
   "dependencies": {
     "pelias-config": "^0.x.x",
