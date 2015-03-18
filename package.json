@@ -1,6 +1,6 @@
 {
   "name": "pelias-admin-lookup",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "A fast, local, streaming Quattroshapes administrative hierarchy lookup.",
   "keywords": ["local", "stream", "quattroshapes", "coarse", "reverse-geocoder"],
   "author": "mapzen",
@@ -18,10 +18,12 @@
     "through2": "0.6.3",
     "async": "0.9.0",
     "polygon-lookup": "^1.0.0",
-    "pelias-logger": "^0.x.x"
+    "pelias-logger": "^0.x.x",
+    "microtime": "^1.x.x"
   },
   "devDependencies": {
     "precommit-hook": "1.0.7",
+    "pelias-model": "0.1.1",
     "tape": "3.0.3",
     "tap-spec": "2.1.2",
     "express": "^4.x.x"
