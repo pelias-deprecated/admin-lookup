@@ -4,6 +4,10 @@
 			"lon": 28.4960926331573,
 			"lat": 45.4035864648678
 		},
+		"existing": {
+			"alpha3": "ABC",
+			"admin1": "some state"
+		},
 		"expected": {
 			"alpha3": "MDA",
 			"admin0": "Ukraine",
@@ -15,6 +19,10 @@
 		"point": {
 			"lon": 13.8730611362194,
 			"lat": 50.9167986533314
+		},
+		"existing": {
+			"alpha3": "DEF",
+			"admin1": "another state name"
 		},
 		"expected": {
 			"alpha3": "DEU",
@@ -145,6 +153,16 @@
 		"point": {
 			"lat": 37.323007681574374,
 			"lon": -122.03158378601076
+		},
+		"existing": {
+			"alpha3": "DEF",
+			"admin0": "A country",
+			"admin1": "A state",
+			"admin2": "A sub-state",
+			"locality": "A locality",
+			"neighborhood": "A neighborhood",
+			"popularity": 30,
+			"population": 40
 		},
 		"expected": {
 			"alpha3": "USA",

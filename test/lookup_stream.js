@@ -18,24 +18,39 @@ var lookupPoints = require( './lookup_points.json' );
  */
 tape( 'Test setter stream.', function ( test ){
   var expectedValues = lookupPoints.map( function ( testCase ){
-    return testCase.expected;
+    return {lookup: testCase.expected, existing: testCase.existing || {}};
   });
 
   var adminLevelNames = [
     'admin0', 'admin1', 'admin2', 'local_admin', 'locality', 'neighborhood'
   ];
   var lookupStream = lookup.stream();
+
   var testPipe = through.obj(
     function write( data, _, next ){
       var expected = expectedValues.shift();
-      for( var prop in expected ){
+      function getExpectedValue( propName ){
+        return  expected.existing.hasOwnProperty( propName ) ?
+          expected.existing[ propName ] :
+          expected.lookup[ propName ];
+      }
+
+      for( var prop in expected.lookup ){
         if( adminLevelNames.indexOf( prop ) !== -1 ){
-          test.equal( data.getAdmin( prop ), expected[ prop ], prop + ' matches.' );
+          test.equal( data.getAdmin( prop ), getExpectedValue( prop ), prop + ' matches.' );
         }
       }
 
-      if( expected.hasOwnProperty( 'alpha3' ) ){
-        test.equal( data.getAlpha3(), expected.alpha3, 'alpha3 matches.' );
+      if( expected.lookup.hasOwnProperty( 'alpha3' ) ){
+        test.equal( data.getAlpha3(), getExpectedValue( 'alpha3' ), 'alpha3 matches.' );
+      }
+
+      if( expected.lookup.hasOwnProperty( 'popularity' ) ){
+        test.equal( data.getPopularity(), getExpectedValue( 'popularity' ), 'popularity matches.' );
+      }
+
+      if( expected.lookup.hasOwnProperty( 'population' ) ){
+        test.equal( data.getPopulation(), getExpectedValue( 'population' ), 'population matches.' );
       }
       next();
     }, function end( done ){
@@ -47,6 +62,25 @@ tape( 'Test setter stream.', function ( test ){
   lookupStream.pipe( testPipe );
   lookupPoints.forEach( function ( testCase ){
     var doc = new peliasModel.Document( '_', 1 ).setCentroid( testCase.point );
+    if( testCase.hasOwnProperty( 'existing' ) ){
+      for( var prop in testCase.existing ){
+        if( adminLevelNames.indexOf( prop ) !== -1 ){
+          doc.setAdmin( prop, testCase.existing[ prop ] );
+        }
+      }
+
+      if( testCase.existing.hasOwnProperty( 'popularity' ) ){
+        doc.setPopularity( testCase.existing.popularity );
+      }
+
+      if( testCase.existing.hasOwnProperty( 'population' ) ){
+        doc.setPopulation( testCase.existing.population );
+      }
+
+      if( testCase.existing.hasOwnProperty( 'alpha3' ) ){
+        doc.setAlpha3( testCase.existing.alpha3 );
+      }
+    }
     lookupStream.write( doc );
   });
   lookupStream.end();
