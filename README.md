@@ -56,10 +56,11 @@ cause the process to freeze up (as the garbage collector churns away attempting 
 fork a child process per admin layer for multiple V8 heaps and slightly simplify polygons.
 
 ## acceptance tests
-The package ships with a minimal unit-testing suite (`npm test`), and with two more comprehensive testing methods:
+The package ships with a minimal unit-testing suite (`npm test`), and with three more comprehensive testing methods:
 
   * `npm run test-lookups`: will load the admin-lookup and run it against the test-cases found in
     `test/lookup_points.json`, reporting any mismatches.
+  * `npm run test-stream`: tests whether the lookup stream sets `pelias-model` `Document`s' values properly.
   * `npm run test-web-app`: a tool that'll load the admin-lookup, and serve a dead-simple browser app that allows you
     to pan around a map and receive lookup results for the points that you click on. Should make it easy to continually
     test the package while modifying it.
