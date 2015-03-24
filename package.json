@@ -19,7 +19,8 @@
     "async": "0.9.0",
     "polygon-lookup": "^1.0.0",
     "pelias-logger": "^0.x.x",
-    "microtime": "^1.x.x"
+    "microtime": "^1.x.x",
+    "require-dir": "0.2.0"
   },
   "devDependencies": {
     "precommit-hook": "1.0.7",
