@@ -180,5 +180,23 @@
 			"neighborhood": "Monta Vista",
 			"popularity": 6033682
 		}
+	},
+	{
+		"point": {
+			"lat": 39.0658,
+			"lon": -98.2700
+		},
+		"expected": {
+			"admin1_abbr": "KS"
+		}
+	},
+	{
+		"point": {
+			"lat": 32.1483,
+			"lon": -97.8072
+		},
+		"expected": {
+			"admin1_abbr": "TX"
+		}
 	}
 ]
