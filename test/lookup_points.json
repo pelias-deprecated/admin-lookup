@@ -44,9 +44,7 @@
 			"admin2": "New York County",
 			"locality": "New York",
 			"local_admin": "Manhattan",
-			"neighborhood": "Flatiron District",
-			"population": 1585873,
-			"popularity": 8298486
+			"neighborhood": "Flatiron District"
 		}
 	},
 	{
@@ -60,9 +58,7 @@
 			"admin2": "Greater London",
 			"alpha3": "GBR",
 			"locality": "London",
-			"neighborhood": "Haggerston",
-			"population": 8278251,
-			"popularity": 1690336
+			"neighborhood": "Haggerston"
 		}
 	},
 	{
@@ -78,9 +74,7 @@
 			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Battery Park City",
-			"population": 1585873,
-			"popularity": 8298486
+			"neighborhood": "Battery Park City"
 		}
 	},
 	{
@@ -96,9 +90,7 @@
 			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Fort Jay",
-			"population": 1585873,
-			"popularity": 8298486
+			"neighborhood": "Fort Jay"
 		}
 	},
 	{
@@ -114,9 +106,7 @@
 			"admin2": "Hudson County",
 			"local_admin": "Hoboken",
 			"locality": "Hoboken",
-			"neighborhood": "Newport",
-			"population": 50005,
-			"popularity": 511475
+			"neighborhood": "Newport"
 		}
 	},
 	{
@@ -132,9 +122,7 @@
 			"admin2": "Queens County",
 			"local_admin": "Queens",
 			"locality": "New York",
-			"neighborhood": "Ridgewood",
-			"population": 2230722,
-			"popularity": 5751444
+			"neighborhood": "Ridgewood"
 		}
 	},
 	{
@@ -150,9 +138,7 @@
 			"admin2": "New York County",
 			"local_admin": "Manhattan",
 			"locality": "New York",
-			"neighborhood": "Soho",
-			"population": 1585873,
-			"popularity": 8298486
+			"neighborhood": "Soho"
 		}
 	},
 	{
@@ -166,9 +152,7 @@
 			"admin1": "A state",
 			"admin2": "A sub-state",
 			"locality": "A locality",
-			"neighborhood": "A neighborhood",
-			"popularity": 30,
-			"population": 40
+			"neighborhood": "A neighborhood"
 		},
 		"expected": {
 			"alpha3": "USA",
@@ -176,9 +160,7 @@
 			"admin1": "California",
 			"admin1_abbr": "CA",
 			"admin2": "Santa Clara County",
-			"locality": "Cupertino",
-			"neighborhood": "Monta Vista",
-			"popularity": 6033682
+			"locality": "Cupertino"
 		}
 	},
 	{

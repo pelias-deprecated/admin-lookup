@@ -45,13 +45,6 @@ tape( 'Test setter stream.', function ( test ){
         test.equal( data.getAlpha3(), getExpectedValue( 'alpha3' ), 'alpha3 matches.' );
       }
 
-      if( expected.lookup.hasOwnProperty( 'popularity' ) ){
-        test.equal( data.getPopularity(), getExpectedValue( 'popularity' ), 'popularity matches.' );
-      }
-
-      if( expected.lookup.hasOwnProperty( 'population' ) ){
-        test.equal( data.getPopulation(), getExpectedValue( 'population' ), 'population matches.' );
-      }
       next();
     }, function end( done ){
       test.end();
@@ -67,14 +60,6 @@ tape( 'Test setter stream.', function ( test ){
         if( adminLevelNames.indexOf( prop ) !== -1 ){
           doc.setAdmin( prop, testCase.existing[ prop ] );
         }
-      }
-
-      if( testCase.existing.hasOwnProperty( 'popularity' ) ){
-        doc.setPopularity( testCase.existing.popularity );
-      }
-
-      if( testCase.existing.hasOwnProperty( 'population' ) ){
-        doc.setPopulation( testCase.existing.population );
       }
 
       if( testCase.existing.hasOwnProperty( 'alpha3' ) ){
