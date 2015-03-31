@@ -22,7 +22,7 @@ tape( 'Test setter stream.', function ( test ){
   });
 
   var adminLevelNames = [
-    'admin0', 'admin1', 'admin2', 'local_admin', 'locality', 'neighborhood'
+    'admin0', 'admin1', 'admin1_abbr', 'admin2', 'local_admin', 'locality', 'neighborhood'
   ];
   var lookupStream = lookup.stream();
 
