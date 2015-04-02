@@ -14,7 +14,12 @@ var tape = require( 'tape' );
 var lookupPoints = require( './lookup_points.json' );
 
 /**
- * Test whether the setter stream sets values properly.
+ * Test whether the setter stream sets values properly, using the points inside
+ * `lookupPoints` as test-cases. Make sure that existing values are /not/
+ * overwritten (these are stored in some test-cases' `existing` properties) and
+ * that certain setters can be disabled via `dontSet` properties in Documents'
+ * `_meta` properties (these are present in a `dontSet` property in some
+ * test-cases).
  */
 tape( 'Test setter stream.', function ( test ){
   var expectedValues = lookupPoints.map( function ( testCase ){
@@ -28,11 +33,18 @@ tape( 'Test setter stream.', function ( test ){
 
   var testPipe = through.obj(
     function write( data, _, next ){
+      console.log( JSON.stringify( data, undefined, 4 ) );
       var expected = expectedValues.shift();
       function getExpectedValue( propName ){
-        return  expected.existing.hasOwnProperty( propName ) ?
-          expected.existing[ propName ] :
-          expected.lookup[ propName ];
+        if( expected.existing.hasOwnProperty( propName ) ){
+          return expected.existing[ propName ];
+        }
+        else {
+          var dontSet = ( data.getMeta( 'adminLookup' ) || {} ).dontSet;
+          return ( dontSet === undefined || dontSet.indexOf( propName ) === -1 ) ?
+            expected.lookup[ propName ] :
+            undefined;
+        }
       }
 
       for( var prop in expected.lookup ){
@@ -65,6 +77,9 @@ tape( 'Test setter stream.', function ( test ){
       if( testCase.existing.hasOwnProperty( 'alpha3' ) ){
         doc.setAlpha3( testCase.existing.alpha3 );
       }
+    }
+    if( testCase.hasOwnProperty( 'dontSet' ) ){
+      doc.setMeta( 'adminLookup', {dontSet: testCase.dontSet} );
     }
     lookupStream.write( doc );
   });
