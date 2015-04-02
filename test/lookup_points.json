@@ -82,6 +82,7 @@
 			"lat": 40.69288604335791,
 			"lon": -74.01939332485199
 		},
+		"dontSet": ["admin0", "admin2", "neighborhood"],
 		"expected": {
 			"alpha3": "USA",
 			"admin0": "United States",
@@ -114,6 +115,7 @@
 			"lat": 40.70777507149538,
 			"lon": -73.90605926513672
 		},
+		"dontSet": ["admin0", "admin2"],
 		"expected": {
 			"alpha3": "USA",
 			"admin0": "United States",
@@ -177,6 +179,7 @@
 			"lat": 32.1483,
 			"lon": -97.8072
 		},
+		"dontSet": [ "admin1" ],
 		"expected": {
 			"admin1_abbr": "TX"
 		}
