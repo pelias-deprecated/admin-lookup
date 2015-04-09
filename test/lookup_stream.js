@@ -33,7 +33,6 @@ tape( 'Test setter stream.', function ( test ){
 
   var testPipe = through.obj(
     function write( data, _, next ){
-      console.log( JSON.stringify( data, undefined, 4 ) );
       var expected = expectedValues.shift();
       function getExpectedValue( propName ){
         if( expected.existing.hasOwnProperty( propName ) ){
