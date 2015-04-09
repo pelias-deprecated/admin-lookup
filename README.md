@@ -30,9 +30,14 @@ machine, on which Node has a default 1gb memory limit instead of 512mb on 32-bit
 ##### `lookup( cb )`
 Asynchronously builds the admin lookup.
 
-  * `cb`: the callback that will be passed an object containing `search` and `end` functions. `search` accepts a
-    `{lat:, lon:}` object and returns an object containing admin-level names. `end()` must be called when you're
-    finished with the lookup, to perform all necessary cleanup.
+  * `cb`: the callback that will be passed an [admin-lookup](#admin-lookup-1) object.
+
+##### admin-lookup
+The admin-lookup object created by `lookup()` contains the following methods:
+
+  * `search( latLng, cb )`: perform a lookup for `latLng`, which is a `{lat:, lon:}` object, and pass an object
+    containing all of the resulting admin values to `cb`.
+  * `end()`: must be called when you're finished using the admin-lookup to properly shut it down (and allow your process to exit).
 
 ##### `stream()`
 A wrapper for `createLookup()` that **pseudo-synchronously** builds a lookup stream. It'll expect
