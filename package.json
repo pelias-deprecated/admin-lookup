@@ -2,14 +2,22 @@
   "name": "pelias-admin-lookup",
   "version": "2.0.8",
   "description": "A fast, local, streaming Quattroshapes administrative hierarchy lookup.",
-  "keywords": ["local", "stream", "quattroshapes", "coarse", "reverse-geocoder"],
+  "keywords": [
+    "local",
+    "stream",
+    "quattroshapes",
+    "coarse",
+    "reverse-geocoder"
+  ],
   "author": "mapzen",
   "main": "lib/master.js",
   "scripts": {
     "test": "node test/test.js | tap-spec",
     "test-web-app": "node test/app/server.js",
     "test-lookups": "node test/lookup_results.js | tap-spec",
-    "test-stream": "node test/lookup_stream.js | tap-spec"
+    "test-stream": "node test/lookup_stream.js | tap-spec",
+    "lint": "jshint .",
+    "validate": "npm ls"
   },
   "dependencies": {
     "pelias-config": "^0.x.x",
@@ -23,11 +31,11 @@
     "require-dir": "0.2.0"
   },
   "devDependencies": {
-    "precommit-hook": "1.0.7",
+    "express": "^4.x.x",
     "pelias-model": "0.1.1",
-    "tape": "3.0.3",
+    "precommit-hook": "^1.0.7",
     "tap-spec": "2.1.2",
-    "express": "^4.x.x"
+    "tape": "3.0.3"
   },
   "repository": {
     "type": "git",
@@ -37,5 +45,10 @@
   "bugs": {
     "url": "https://github.com/pelias/admin-lookup/issues"
   },
-  "homepage": "https://github.com/pelias/admin-lookup"
+  "homepage": "https://github.com/pelias/admin-lookup",
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }
